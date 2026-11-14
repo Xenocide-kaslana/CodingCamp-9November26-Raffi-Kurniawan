@@ -1,0 +1,619 @@
+/* =============================================================
+   Expense & Budget Visualizer — styles.css
+   Single stylesheet: reset, theme tokens, layout, components,
+   responsive design. No frameworks. Pure CSS3.
+   ============================================================= */
+
+/* ---------- Minimal reset ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ---------- Theme tokens (light = default) ---------- */
+:root {
+  /* Surfaces & text */
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+
+  /* Accent / actions */
+  --accent: #059669;
+  --accent-contrast: #ffffff;
+  --accent-ring: rgba(5, 150, 105, 0.22);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.10);
+
+  /* Category colors (fixed across renders; shared by chart & badges) */
+  --cat-food: #ea580c;
+  --cat-transport: #2563eb;
+  --cat-fun: #db2777;
+
+  /* Shape & spacing */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --gap: 1.5rem;
+
+  --transition: 0.15s ease;
+
+  color-scheme: light;
+}
+
+/* ---------- Dark theme overrides ---------- */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #243049;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+
+  --accent: #10b981;
+  --accent-contrast: #06281f;
+  --accent-ring: rgba(16, 185, 129, 0.30);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.16);
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.35);
+
+  color-scheme: dark;
+}
+
+/* ---------- Base / typography ---------- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+/* Generic hidden utility (JS toggles empty states / banners) */
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Layout container ---------- */
+.app-header,
+.app-main,
+.app-footer {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding-top: 1.5rem;
+  padding-bottom: 2.5rem;
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.app-title {
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Total spending card ---------- */
+.total-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.5rem;
+}
+
+.total-card__title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.total-card__amount {
+  margin-top: 0.4rem;
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  word-break: break-word;
+}
+
+/* ---------- Section heads ---------- */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Expense form ---------- */
+.form-section,
+.transactions-section,
+.chart-section,
+.monthly-section {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.5rem;
+}
+
+.expense-form {
+  margin-top: 0.85rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.form-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), box-shadow var(--transition), background-color var(--transition);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+/* Invalid field state (toggled by JS on validation failure) */
+input.invalid,
+select.invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+.form-actions {
+  margin-top: 1rem;
+}
+
+.form-errors {
+  margin-top: 0.75rem;
+  min-height: 1.2rem;
+  color: var(--danger);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.form-errors:empty {
+  min-height: 0;
+  margin: 0;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn--primary {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  width: 100%;
+}
+
+.btn--primary:hover {
+  filter: brightness(0.95);
+}
+
+.btn--primary:active {
+  transform: translateY(1px);
+}
+
+.btn--icon {
+  background-color: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text);
+  padding: 0.45rem 0.7rem;
+  font-size: 1rem;
+  min-width: 2.4rem;
+}
+
+.btn--icon:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn--icon:active {
+  transform: translateY(1px);
+}
+
+/* ---------- Sort control ---------- */
+.sort-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-control__label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.sort-control select {
+  width: auto;
+  padding: 0.4rem 0.6rem;
+}
+
+/* ---------- Transaction list ---------- */
+.transaction-list-wrap {
+  position: relative;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.transaction-list {
+  list-style: none;
+  max-height: 480px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.transaction-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.transaction-list__item:last-child {
+  border-bottom: none;
+}
+
+.transaction-list__name {
+  flex: 1 1 55%;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.transaction-list__amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.transaction-list__date {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.transaction-list__delete {
+  display: inline-flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background-color var(--transition);
+}
+
+.transaction-list__delete:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background-color: var(--danger-soft);
+}
+
+.transaction-list__delete:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
+
+/* ---------- Category badges ---------- */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.category-badge--Food {
+  background-color: var(--cat-food);
+}
+
+.category-badge--Transport {
+  background-color: var(--cat-transport);
+}
+
+.category-badge--Fun {
+  background-color: var(--cat-fun);
+}
+
+/* ---------- Chart ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+}
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pie-chart {
+  max-width: 100%;
+  height: 100%;
+}
+
+/* ---------- Monthly summary ---------- */
+.month-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.month-label {
+  font-weight: 700;
+  font-size: 0.98rem;
+  min-width: 9ch;
+  text-align: center;
+}
+
+.monthly-total {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.75rem 0 1rem;
+}
+
+.monthly-total__label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.monthly-total__value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.monthly-breakdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.monthly-breakdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.monthly-breakdown__item:last-child {
+  border-bottom: none;
+}
+
+.monthly-breakdown__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.monthly-breakdown__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.monthly-breakdown__dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.monthly-breakdown__dot--Food { background-color: var(--cat-food); }
+.monthly-breakdown__dot--Transport { background-color: var(--cat-transport); }
+.monthly-breakdown__dot--Fun { background-color: var(--cat-fun); }
+
+/* ---------- Empty states ---------- */
+.empty-state {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  padding: 1.75rem 1rem;
+  width: 100%;
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* ---------- Responsive: desktop (>=768px) ---------- */
+@media (min-width: 768px) {
+  /* Top row: total card + form side by side; grid + monthly span full width */
+  .app-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .total-card {
+    grid-column: 1;
+  }
+  .form-section {
+    grid-column: 2;
+  }
+  .grid {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+  .monthly-section {
+    grid-column: 1 / -1;
+  }
+
+  /* Primary button no longer full width on desktop */
+  .btn--primary {
+    width: auto;
+  }
+}
+
+/* ---------- Responsive: small mobile tweaks ---------- */
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 1.05rem;
+  }
+  .total-card__amount {
+    font-size: 1.8rem;
+  }
+  .form-field {
+    flex-basis: 100%;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
