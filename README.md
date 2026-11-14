@@ -66,7 +66,7 @@ The app is ready for static hosting with no configuration required.
 4. Select the **main** branch and the **root** folder.
 5. Click **Save**.
 
-The app will be available at `https://<username>.github.io/<repository-name>/`.
+The app will be available at `https://xenocide-kaslana.github.io/CodingCamp-9November26-Raffi-Kurniawan/`.
 
 Because all asset paths are relative (`css/styles.css`, `js/app.js`), the app works without any path configuration.
 
